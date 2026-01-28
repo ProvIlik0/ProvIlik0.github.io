@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Генератор</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+
+    <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+
+    <div class="tabs">
+        <div class="tab active" id="tabNick" onclick="switchTab('nick')">Ник</div>
+        <div class="tab" id="tabPass" onclick="switchTab('pass')">Пароль</div>
+    </div>
+
+    <!-- НИК -->
+    <div class="section active" id="nickSection">
+        <input type="text" id="nameInput" placeholder="Введи имя">
+
+        <select id="styleSelect">
+            <option value="game">🎮 Игровой</option>
+            <option value="media">📺 YouTube / TikTok</option>
+            <option value="short">⚡ Короткий</option>
+        </select>
+
+        <button onclick="generateNickname()">Сгенерировать ник</button>
+
+        <div class="result" id="nicknameResult"></div>
+        <button class="copy-btn" onclick="copyText('nicknameResult')">Скопировать</button>
+    </div>
+
+    <!-- ПАРОЛЬ -->
+    <div class="section" id="passSection">
+        <button onclick="generatePassword()">Сгенерировать пароль</button>
+
+        <div class="result" id="passwordResult"></div>
+        <button class="copy-btn" onclick="copyText('passwordResult')">Скопировать</button>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
