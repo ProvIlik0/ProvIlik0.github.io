@@ -1,39 +1,34 @@
 /* ===== THEME ===== */
 function setTheme(t){
-    document.body.className = t;
-    localStorage.setItem("theme", t);
+    document.body.className=t;
+    localStorage.setItem("theme",t);
 }
-document.body.className = localStorage.getItem("theme") || "dark";
+document.body.className=localStorage.getItem("theme")||"dark";
 
-/* ===== VISITS (1 PER SESSION AFTER ACTION) ===== */
-let visits = Number(localStorage.getItem("visits") || 0);
-let actionDone = sessionStorage.getItem("actionDone");
-
-const visitsEl = document.getElementById("visits");
+/* ===== VISITS ===== */
+let visits=+localStorage.getItem("visits")||0;
+let sessionUsed=sessionStorage.getItem("used");
+const visitsEl=document.getElementById("visits");
 updateVisits();
 
 function action(){
-    if(!actionDone){
+    if(!sessionUsed){
         visits++;
-        localStorage.setItem("visits", visits);
-        sessionStorage.setItem("actionDone", "1");
-        actionDone = true;
+        localStorage.setItem("visits",visits);
+        sessionStorage.setItem("used","1");
+        sessionUsed=true;
         updateVisits();
     }
 }
+function updateVisits(){visitsEl.textContent="Visits: "+visits;}
 
-function updateVisits(){
-    visitsEl.textContent = "Visits: " + visits;
-}
-
-/* ===== AUTH ===== */
+/* ===== AUTH UI ===== */
 function showRegister(){
     register.style.display="block";
     login.style.display="none";
     tabReg.classList.add("active");
     tabLog.classList.remove("active");
 }
-
 function showLogin(){
     register.style.display="none";
     login.style.display="block";
@@ -41,25 +36,26 @@ function showLogin(){
     tabReg.classList.remove("active");
 }
 
+/* ===== AUTH LOGIC ===== */
+function valid(l,p){
+    if(!l||!p) return "Заполни все поля";
+    if(/[а-яА-Я\s]/.test(l)) return "Русские буквы и пробелы запрещены";
+    return "";
+}
+
 function register(){
-    if(/[а-яА-Я\s]/.test(regLogin.value)){
-        regError.textContent="Русские буквы и пробелы запрещены";
-        return;
-    }
-    localStorage.setItem("user", JSON.stringify({
-        l:regLogin.value,p:regPass.value
-    }));
-    auth.style.display="none";
-    app.style.display="block";
+    const err=valid(regLogin.value,regPass.value);
+    if(err){regError.textContent=err;return;}
+    localStorage.setItem("user",JSON.stringify({l:regLogin.value,p:regPass.value}));
+    auth.style.display="none";app.style.display="block";
     action();
 }
 
 function login(){
     const u=JSON.parse(localStorage.getItem("user"));
     if(!u)return;
-    if(logLogin.value===u.l && logPass.value===u.p){
-        auth.style.display="none";
-        app.style.display="block";
+    if(logLogin.value===u.l&&logPass.value===u.p){
+        auth.style.display="none";app.style.display="block";
         action();
     }
 }
@@ -69,38 +65,41 @@ function logout(){
     auth.style.display="block";
 }
 
+/* ===== TEMP ACCOUNT ===== */
+let tempTimer;
+function createTemp(){
+    let t=1800;
+    timer.style.display="block";
+    auth.style.display="none";app.style.display="block";
+    action();
+    tempTimer=setInterval(()=>{
+        t--;
+        timer.textContent=`Осталось ${Math.floor(t/60)}:${String(t%60).padStart(2,"0")}`;
+        if(t<=0){clearInterval(tempTimer);logout();}
+    },1000);
+}
+
 /* ===== NICK + HISTORY ===== */
-let historyArr = JSON.parse(localStorage.getItem("history")||"[]");
+let hist=JSON.parse(localStorage.getItem("hist")||"[]");
 
 function generateNick(){
-    const chars="abcdefghijklmnopqrstuvwxyz0123456789";
-    let r="";
-    for(let i=0;i<6;i++)r+=chars[Math.random()*chars.length|0];
-    const nick=(baseNick.value||"")+r;
-    nickResult.textContent=nick;
-
-    historyArr.unshift(nick);
-    if(historyArr.length>5)historyArr.pop();
-    localStorage.setItem("history",JSON.stringify(historyArr));
-    renderHistory();
-    action();
+    const c="abcdefghijklmnopqrstuvwxyz0123456789";
+    let r="";for(let i=0;i<6;i++)r+=c[Math.random()*c.length|0];
+    const n=(baseNick.value||"")+r;
+    nickResult.textContent=n;
+    hist.unshift(n);if(hist.length>5)hist.pop();
+    localStorage.setItem("hist",JSON.stringify(hist));
+    renderHistory();action();
 }
-
-function renderHistory(){
-    history.innerHTML=historyArr.join("<br>");
-}
-
+function renderHistory(){history.innerHTML=hist.join("<br>");}
 function toggleHistory(){
     history.style.display=history.style.display==="block"?"none":"block";
 }
-
 renderHistory();
 
 /* ===== PASSWORD ===== */
 function generatePassword(){
     const c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-    let p="";
-    for(let i=0;i<12;i++)p+=c[Math.random()*c.length|0];
-    passResult.textContent=p;
-    action();
+    let p="";for(let i=0;i<12;i++)p+=c[Math.random()*c.length|0];
+    passResult.textContent=p;action();
 }
