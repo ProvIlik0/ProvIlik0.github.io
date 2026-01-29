@@ -1,44 +1,51 @@
-// ===== ВИЗИТЫ =====
-let visitKey = "visited";
+// ===== VISITS =====
 let visits = Number(localStorage.getItem("visits") || 0);
-
-if(!sessionStorage.getItem(visitKey)){
+if(!sessionStorage.getItem("visited")){
     visits++;
     localStorage.setItem("visits", visits);
-    sessionStorage.setItem(visitKey, "1");
+    sessionStorage.setItem("visited","1");
 }
-
 document.getElementById("visits").textContent = visits;
 
-// ===== ПЕРЕКЛЮЧЕНИЕ =====
+// ===== ELEMENTS =====
+const authCard = document.getElementById("authCard");
+const genCard = document.getElementById("genCard");
+
 const regBox = document.getElementById("registerBox");
 const loginBox = document.getElementById("loginBox");
+
 const tabReg = document.getElementById("tabReg");
 const tabLogin = document.getElementById("tabLogin");
 
+const regError = document.getElementById("regError");
+const logError = document.getElementById("logError");
+
+const historyBox = document.getElementById("history");
+
+// ===== TABS =====
 function showRegister(){
-    regBox.style.display="block";
-    loginBox.style.display="none";
+    regBox.classList.remove("hidden");
+    loginBox.classList.add("hidden");
     tabReg.classList.add("active");
     tabLogin.classList.remove("active");
 }
 
 function showLogin(){
-    regBox.style.display="none";
-    loginBox.style.display="block";
+    loginBox.classList.remove("hidden");
+    regBox.classList.add("hidden");
     tabLogin.classList.add("active");
     tabReg.classList.remove("active");
 }
 
-// ===== ПРОВЕРКА =====
+// ===== VALIDATION =====
 function valid(l,p){
-    if(!l||!p) return "Заполни все поля";
+    if(!l || !p) return "Заполни все поля";
     if(/[А-Яа-я]/.test(l)) return "Русские буквы запрещены";
     if(/\s/.test(l)) return "Пробелы запрещены";
     return "";
 }
 
-// ===== РЕГИСТРАЦИЯ =====
+// ===== REGISTER =====
 function register(){
     const l = regLogin.value.trim();
     const p = regPass.value.trim();
@@ -46,61 +53,60 @@ function register(){
     if(e){ regError.textContent=e; return; }
 
     localStorage.setItem("user",JSON.stringify({l,p}));
-    regError.style.color="#7CFF7C";
-    regError.textContent="Аккаунт создан. Войди 👇";
     showLogin();
     logLogin.value=l;
+    logPass.value="";
+    logPass.focus();
 }
 
-// ===== ВХОД =====
+// ===== LOGIN =====
 function login(){
     const u = JSON.parse(localStorage.getItem("user")||"null");
-    if(!u) return alert("Нет аккаунта");
-    if(logLogin.value!==u.l||logPass.value!==u.p)
-        return alert("Неверные данные");
-    alert("Вход выполнен");
+    if(!u){ logError.textContent="Нет аккаунта"; return; }
+    if(logLogin.value!==u.l || logPass.value!==u.p){
+        logError.textContent="Неверные данные";
+        return;
+    }
+    authCard.classList.add("hidden");
+    genCard.classList.remove("hidden");
 }
 
-// ===== ГЕНЕРАТОР НИКОВ =====
-const historyBox = document.getElementById("history");
+// ===== LOGOUT =====
+function logout(){
+    genCard.classList.add("hidden");
+    authCard.classList.remove("hidden");
+    showLogin();
+}
 
+// ===== NICK =====
 function genNick(){
-    const base = baseInput();
-    const rand = Math.floor(Math.random()*900+100);
-    const nick = base + rand;
+    const base = document.getElementById("base").value || ["Player","Neo","Dark","X"][rand(4)];
+    const nick = base + rand(900+100);
+    document.getElementById("nickResult").textContent = nick;
     saveHistory(nick);
-    alert(nick);
 }
 
-function baseInput(){
-    return base.value || ["Player","X","Neo","Dark"][Math.floor(Math.random()*4)];
-}
+function rand(n){ return Math.floor(Math.random()*n); }
 
-// ===== ИСТОРИЯ =====
+// ===== HISTORY =====
 function saveHistory(n){
     let h = JSON.parse(localStorage.getItem("history")||"[]");
     h.unshift(n);
     h = h.slice(0,5);
     localStorage.setItem("history",JSON.stringify(h));
-    renderHistory();
-}
-
-function renderHistory(){
-    let h = JSON.parse(localStorage.getItem("history")||"[]");
-    historyBox.innerHTML = h.map(x=>"• "+x).join("<br>");
 }
 
 function toggleHistory(){
-    renderHistory();
+    let h = JSON.parse(localStorage.getItem("history")||"[]");
+    historyBox.innerHTML = h.length ? h.map(x=>"• "+x).join("<br>") : "Пусто";
     historyBox.style.display =
         historyBox.style.display==="block"?"none":"block";
 }
 
-// ===== ПАРОЛЬ =====
+// ===== PASSWORD =====
 function genPass(){
-    const chars="ABCDEFGabcdefg123456789!@#";
+    const chars="ABCDEFGabcdefg123456789!@#$";
     let p="";
-    for(let i=0;i<10;i++)
-        p+=chars[Math.floor(Math.random()*chars.length)];
-    alert(p);
+    for(let i=0;i<10;i++) p+=chars[rand(chars.length)];
+    document.getElementById("passResult").textContent = p;
 }
