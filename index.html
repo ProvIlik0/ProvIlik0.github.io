@@ -2,37 +2,45 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Генератор ников</title>
+    <title>Generator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
-    <div class="card">
-        <div class="timer" id="timer">Осталось 30:00</div>
+<div class="container">
 
-        <input type="text" id="baseNick" placeholder="Основа ника">
+    <!-- ===== REGISTER / LOGIN ===== -->
+    <div class="auth" id="auth">
+        <div class="tabs">
+            <button class="active" onclick="showRegister()">Регистрация</button>
+            <button onclick="showLogin()">Вход</button>
+        </div>
 
-        <select id="type">
-            <option>Игровой</option>
-        </select>
+        <div id="register">
+            <input id="regLogin" placeholder="Логин">
+            <div class="error" id="regError"></div>
+            <input id="regPass" type="password" placeholder="Пароль">
+            <button onclick="register()">Создать аккаунт</button>
+        </div>
 
-        <select id="caseType">
-            <option value="normal">Aa</option>
-            <option value="lower">aa</option>
-            <option value="upper">AA</option>
-        </select>
+        <div id="login" style="display:none">
+            <input id="logLogin" placeholder="Логин">
+            <input id="logPass" type="password" placeholder="Пароль">
+            <button onclick="login()">Войти</button>
+        </div>
+    </div>
+
+    <!-- ===== APP ===== -->
+    <div class="card" id="app" style="display:none">
+        <input id="baseNick" placeholder="Основа ника">
 
         <button onclick="generateNick()">Сгенерировать ник</button>
         <div class="result" id="nickResult"></div>
 
-        <button onclick="toggleHistory()">История ников</button>
-        <div class="history" id="history"></div>
-
         <button onclick="generatePassword()">Сгенерировать пароль</button>
         <div class="result" id="passResult"></div>
 
-        <button class="exit">Выйти</button>
+        <button class="exit" onclick="logout()">Выйти</button>
     </div>
 </div>
 
@@ -42,7 +50,7 @@
     <div>Visits</div>
 </div>
 
-<!-- РЕАЛЬНЫЙ СЧЁТЧИК -->
+<!-- реальный счётчик визитов -->
 <script data-goatcounter="https://aviel.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
