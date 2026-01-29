@@ -2,65 +2,135 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Generator</title>
-<link rel="stylesheet" href="style.css">
+<title>Генератор ников</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0f0f12;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.card{
+    background:#1b1b1f;
+    padding:25px;
+    border-radius:16px;
+    width:340px;
+    box-shadow:0 0 40px rgba(0,0,0,.6);
+}
+
+.tabs{
+    display:flex;
+    background:#2a2a2e;
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+.tabs button{
+    flex:1;
+    padding:10px;
+    border:none;
+    background:none;
+    color:#aaa;
+    cursor:pointer;
+}
+
+.tabs button.active{
+    background:#b388ff;
+    color:#000;
+}
+
+input, select, button{
+    width:100%;
+    padding:10px;
+    margin:6px 0;
+    border:none;
+    border-radius:10px;
+    background:#2a2a2e;
+    color:#fff;
+}
+
+button.main{
+    background:#b388ff;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.error{
+    color:#ff6b6b;
+    font-size:12px;
+}
+
+.history{
+    display:none;
+    margin-top:8px;
+    font-size:13px;
+    opacity:.85;
+}
+
+.footer{
+    position:fixed;
+    right:15px;
+    bottom:15px;
+    font-size:12px;
+    opacity:.5;
+    text-align:right;
+}
+</style>
 </head>
 
-<body class="dark">
+<body>
 
-<div class="container">
+<div class="card">
 
-<!-- AUTH -->
-<div class="auth" id="auth">
-    <div class="tabs">
-        <button id="tabReg" class="active" onclick="showRegister()">Регистрация</button>
-        <button id="tabLog" onclick="showLogin()">Вход</button>
-    </div>
-
-    <div id="register">
-        <input id="regLogin" placeholder="Логин">
-        <input id="regPass" type="password" placeholder="Пароль">
-        <div class="error" id="regError"></div>
-        <button onclick="register()">Создать аккаунт</button>
-        <button class="secondary" onclick="createTemp()">Временный аккаунт (30 мин)</button>
-    </div>
-
-    <div id="login" style="display:none">
-        <input id="logLogin" placeholder="Логин">
-        <input id="logPass" type="password" placeholder="Пароль">
-        <button onclick="login()">Войти</button>
-    </div>
+<div class="tabs">
+    <button id="tabReg" class="active" onclick="showRegister()">Регистрация</button>
+    <button id="tabLogin" onclick="showLogin()">Вход</button>
 </div>
 
-<!-- APP -->
-<div class="card" id="app" style="display:none">
+<!-- РЕГИСТРАЦИЯ -->
+<div id="registerBox">
+    <input id="regLogin" placeholder="Логин">
+    <input id="regPass" type="password" placeholder="Пароль">
+    <div class="error" id="regError"></div>
+    <button class="main" onclick="register()">Создать аккаунт</button>
+</div>
 
-<select onchange="setTheme(this.value)">
-    <option value="dark">Dark</option>
-    <option value="light">Light</option>
-    <option value="neon">Neon</option>
+<!-- ВХОД -->
+<div id="loginBox" style="display:none">
+    <input id="logLogin" placeholder="Логин">
+    <input id="logPass" type="password" placeholder="Пароль">
+    <button class="main" onclick="login()">Войти</button>
+</div>
+
+<hr style="opacity:.1;margin:15px 0">
+
+<!-- ГЕНЕРАТОР -->
+<input id="base" placeholder="Основа ника">
+<select id="style">
+    <option value="game">Игровой</option>
+    <option value="cool">Крутой</option>
 </select>
 
-<div class="timer" id="timer" style="display:none"></div>
-
-<input id="baseNick" placeholder="Основа ника">
-
-<button onclick="generateNick()">Сгенерировать ник</button>
-<button class="icon" onclick="toggleHistory()">🕘</button>
+<button class="main" onclick="genNick()">Сгенерировать ник</button>
+<button onclick="toggleHistory()">🕘 История</button>
 <div class="history" id="history"></div>
-<div class="result" id="nickResult"></div>
 
-<button onclick="generatePassword()">Сгенерировать пароль</button>
-<div class="result" id="passResult"></div>
-
-<button class="exit" onclick="logout()">Выйти</button>
-</div>
+<button class="main" onclick="genPass()">Сгенерировать пароль</button>
 
 </div>
 
-<div class="site-info">
-    <div>Creator: Aviel</div>
-    <div id="visits">Visits: 0</div>
+<div class="footer">
+    Creator: Aviel<br>
+    Visits: <span id="visits">0</span>
 </div>
 
 <script src="script.js"></script>
